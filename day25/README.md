@@ -11,22 +11,15 @@ Specifically, it contains a parser for the program specification in "The Halting
 
 ## Usage
 
-To compile the application, run:
-```
-mkdir build
-cd build
-cmake ..
-make
-cd ..
-```
+To compile the application, run `./build.sh`
 
-Afterwards, run `build/day25` to get a short help message.
+Afterwards, run `build-Release/day25` to get a short help message.
 
-To just get the result, use `build/day25 run real-input bytecode`. This will take the program from the file `real-input` and run it with the bytecode-based runtime (as apposed to `ast`, the tree-walker runtimer).
+To just get the result, use `build-Release/day25 run real-input bytecode`. This will take the program from the file `real-input` and run it with the bytecode-based runtime (as apposed to `ast`, the tree-walker runtimer).
 
-To benchmark all available runtimes, use `build/day25 benchmark real-input`.
+To benchmark all available runtimes, use `build-Release/day25 benchmark real-input`.
 
-To convert a Program to C sourcecode, use `build/day25 generate-c real-input`. The result will be written to the file `generated-program.c`, can be compiled with `gcc -o generated-program generated-program.c`, and then run with `./generated-program`. It will both run a short benchmark, and output the result for the day.
+To convert a Program to C sourcecode, use `build-Release/day25 generate-c real-input`. The result will be written to the file `generated-program.c`, can be compiled with `gcc -o generated-program generated-program.c`, and then run with `./generated-program`. It will both run a short benchmark, and output the result for the day.
 
 ## File overview
 
