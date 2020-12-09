@@ -89,6 +89,11 @@ int main(int argc, char **argv) {
   // Return value '23'
   jit.emit_mov(Register::RAX, 23);
   function_epilogue(jit, "main");
+
+  //Playground area
+  jit.emit_sub(Register::RAX, jit.symbol("main"));
+  jit.emit_sub(Register::R8, jit.symbol("main"));
+
   jit.finalize_code();
 
   {
