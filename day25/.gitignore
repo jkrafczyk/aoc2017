@@ -1,0 +1,12 @@
+/build/
+/make-opcode-sheet.sh
+demo
+demo.c
+demo.o
+peek.asm
+peek.s
+peek
+/cmake-build-*/
+.vscode
+day25-generated-*
+.idea
