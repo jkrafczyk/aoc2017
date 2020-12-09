@@ -30,12 +30,12 @@ uint8_t ModR(uint8_t mod, Register rm, Register reg) {
     return ModR(mod, (uint8_t)rm, reg);
 }
 
-uint8_t SIB(uint8_t ss, uint8_t index, Register reg) {
-    return (ss & 0b11) << 6 | (index & 0b111) << 3 | ((uint8_t)reg & 0b111);
+uint8_t SIB(uint8_t scale, uint8_t index, Register base) {
+    return (scale & 0b11) << 6 | (index & 0b111) << 3 | ((uint8_t)base & 0b111);
 }
 
-uint8_t SIB(uint8_t ss, Register index, Register reg) {
-    return SIB(ss, (uint8_t)index, reg);
+uint8_t SIB(uint8_t scale, Register index, Register base) {
+    return SIB(scale, (uint8_t)index, base);
 }
 
 uint8_t register_pair(Register reg1, Register reg2) {
