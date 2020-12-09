@@ -179,9 +179,9 @@ void Jit::emit_mov(Register dest, Register src) {
     //'/r' = bits '11', followed by src reg, followed dest reg.
     // TODO: This will explode for R8..R15 in any slot!
     uint8_t reg = 0xc0;
-    reg |= ((uint8_t)src) << 3;
-    reg |= ((uint8_t)dest);
-    emit((uint8_t)0x48);
+    reg |= (((uint8_t)src) &0x7) << 3;
+    reg |= ((uint8_t)dest) & 0x7;
+    emit(rex(1, src >= Register::R8, 0, dest >= Register::R8));
     emit((uint8_t)0x89);
     emit(reg);
 }
@@ -191,9 +191,9 @@ void Jit::emit_mov(Register dest, Indirect src) {
     emit(rex(1, dest >= Register::R8, src.offset_reg >= Register::R8 && src.offset_reg != Register::NONE, src.reg >= Register::R8));
     emit((uint8_t)0x8b);
 
-    if (src.reg == Register::RBP) {
+    if (src.reg == Register::RBP || src.reg == Register::R13) {
         throw std::runtime_error("Invalid operand combination.");
-    } else if (src.reg == Register::RSP | src.offset_reg != Register::NONE) {
+    } else if (src.reg == Register::RSP || src.reg == Register::R12 || src.offset_reg != Register::NONE) {
         // Request SIB prefix by using 'RSP' as register:
         emit(ModR(0, dest, Register::RSP));
         if (src.offset_reg == Register::NONE) {
@@ -212,13 +212,12 @@ void Jit::emit_mov(Register dest, Indirect src) {
 
 void Jit::emit_mov(Indirect dest, Register src) {
     // mov r/m64, r64
-    //emit(rex(1, 0, 0, dest.reg >= Register::R8));
     emit(rex(1,  src >= Register::R8, dest.offset_reg >= Register::R8 && dest.offset_reg != Register::NONE, dest.reg >= Register::R8));
     emit((uint8_t)0x89);
 
-    if (dest.reg == Register::RBP) {
+    if (dest.reg == Register::RBP || dest.reg == Register::R13) {
         throw std::runtime_error("Invalid operand combination.");
-    } else if (dest.reg == Register::RSP | dest.offset_reg != Register::NONE) {
+    } else if (dest.reg == Register::RSP || dest.reg == Register::R12 || dest.offset_reg != Register::NONE) {
         // Request SIB prefix by using 'RSP' as register:
         emit(ModR(0, src, Register::RSP));
         if (dest.offset_reg == Register::NONE) {
@@ -230,7 +229,7 @@ void Jit::emit_mov(Indirect dest, Register src) {
     } else {
         uint8_t reg = 0x00;
         reg |= ((uint8_t)dest.reg) & 0x7;
-        reg |= (((uint8_t)src) & 0x7)<< 3;
+        reg |= (((uint8_t)src) & 0x7) << 3;
         emit(reg);
     }
 }
@@ -251,13 +250,13 @@ void Jit::emit_pop(Register reg) {
 void Jit::emit_inc(Register reg) {
     emit(rex(1, 0, 0, reg >= Register::R8));
     emit((uint8_t)0xff);
-    emit((uint8_t)(0xC0 | (uint8_t)reg));
+    emit((uint8_t)(0xC0 | ((uint8_t)reg&0x7)));
 }
 
 void Jit::emit_dec(Register reg) {
     emit(rex(1, 0, 0, reg >= Register::R8));
     emit((uint8_t)0xff);
-    emit((uint8_t)(0xC8 | (uint8_t)reg));
+    emit((uint8_t)(0xC8 | ((uint8_t)reg&0x7)));
 }
 
 void Jit::emit_jmp(Register reg) {

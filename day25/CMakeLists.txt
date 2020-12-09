@@ -13,7 +13,8 @@ add_library(libday25
         executor.cpp
         ast_executor.cpp
         bytecode_executor.cpp
-        jit.cpp)
+        jit.cpp
+        jit_executor.cpp)
 
 #Enable loads of warnings, but accept C99 extensions like designated initializers:
 target_compile_options(libday25 PRIVATE -Wall -Wextra -pedantic -Wno-c99-extensions)

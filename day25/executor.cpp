@@ -1,6 +1,7 @@
 #include "executor.hpp"
 #include "ast_executor.hpp"
 #include "bytecode_executor.hpp"
+#include "jit_executor.hpp"
 
 #include <map>
 using std::function;
@@ -18,7 +19,11 @@ static map<string, ExecutorFactory> factories = {
                    [](auto p) { return std::make_shared<AstExecutor>(p); }),
     std::make_pair("bytecode", [](auto p) {
         return std::make_shared<BytecodeExecutor>(p);
-    })};
+    }),
+    std::make_pair("jit", [](auto p) {
+        return std::make_shared<JitExecutor>(p);
+    }),
+};
 } // namespace
 
 shared_ptr<Executor> get_executor(const string &name, Program p) {

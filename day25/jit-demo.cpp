@@ -12,8 +12,8 @@ using std::ofstream;
 using std::string;
 using namespace day25;
 
-int new_main(int argc, char **argv) {
-    auto program = load_file("sample-input");
+int main(int argc, char **argv) {
+    auto program = load_file("../sample-input");
     auto executor = JitExecutor(program);
     {
         auto memory = executor.jit().dump_memory();
@@ -22,20 +22,28 @@ int new_main(int argc, char **argv) {
             file.write((char *)&byte, 1);
         }
     }
+
+    for (uint64_t i = 0; i < program.checksum_delay; i++) {
+        executor.step();
+    }
     return 0;
 }
 
-int main(int argc, char **argv) {
+int other_main(int argc, char **argv) {
     Jit jit;
     jit.add_constant("some_constant", "asdfzxcv");
     auto symbol = jit.symbol("some_constant");
     cout << symbol.address << endl;
-    jit.emit_mov(Register::R9, symbol);
-    jit.emit_mov(Register::RAX, Indirect(Register::RAX));
-    jit.emit_mov(Register::R9, Indirect(Register::RAX));
-    jit.emit_mov(Register::R9, Indirect(Register::R10));
-    jit.emit_mov(Register::R9, Indirect(Register::R10, Register::RAX));
-    jit.emit_mov(Register::R9, Indirect(Register::R10, Register::R11));
+//    jit.emit_mov(Register::RDX, Register::RAX);
+//    jit.emit_mov(Register::RDX, Register::R10);
+//    jit.emit_mov(Register::R12, Register::RAX);
+//    jit.emit_mov(Register::R12, Register::R10);
+    jit.emit_inc(Register::RDX);
+    jit.emit_inc(Register::R10);
+    jit.emit_dec(Register::RDX);
+    jit.emit_dec(Register::R10);
+
+
 //    jit.emit_mov(Register::R10, Indirect(Register::R9));
     jit.finalize_code();
 
