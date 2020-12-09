@@ -10,3 +10,6 @@ peek
 .vscode
 day25-generated-*
 .idea
+generated-program
+generated-program.c
+a.out
