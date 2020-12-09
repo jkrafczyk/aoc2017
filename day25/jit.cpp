@@ -17,6 +17,12 @@ struct Jit::SymbolRef {
     const uint8_t replacement_length;
 };
 
+struct Jit::Buffer {
+    std::string name;
+    uint64_t size;
+    uint8_t *address;
+};
+
 namespace {
 uint8_t rex(uint8_t w, uint8_t r, uint8_t x, uint8_t b) {
     return (0b0100'0000 | ((w & 1) << 3) | ((r & 1) << 2) | ((x & 1) << 1) |
@@ -63,6 +69,11 @@ Jit::Jit() : m_code_size(16384), m_offset(0), m_code_finalized(false) {
 Jit::~Jit() {
     if (m_code) {
         munmap(m_code, m_code_size);
+    }
+    for (auto it: m_buffers) {
+        if (it.second.address) {
+            delete[] it.second.address;
+        }
     }
 }
 
@@ -509,7 +520,7 @@ void Jit::emit_function_call(Symbol function_name, uint64_t argc, ...) {
     }
     va_list args;
     va_start(args, argc);
-    for (int i=0; i < argc; i++) {
+    for (uint64_t i=0; i < argc; i++) {
         auto value = va_arg(args, uint64_t);
         emit_mov(arg_register_order[i], value);
     }
@@ -538,6 +549,26 @@ uint64_t Jit::call(void *location, uint64_t arg) {
     return f(arg);
 }
 
+void Jit::add_constant(const std::string &name, const std::string &value) {
+    uint8_t *data = new uint8_t[value.length() + 1];
+    memcpy(data, value.c_str(), value.length());
+    data[value.length()] = 0;
+    m_buffers[name] = Buffer{
+        .name = name,
+        .size = (uint64_t)value.length() + 1,
+        .address = data,
+    };
+}
+
+void Jit::add_buffer(const std::string &name, uint64_t size) {
+    uint8_t *data = new uint8_t[size];
+    m_buffers[name] = Buffer{
+        .name = name,
+        .size = size,
+        .address = data
+    };
+}
+
 vector<uint8_t> Jit::dump_memory() const {
     vector<uint8_t> result;
     result.resize(m_offset);
@@ -548,15 +579,21 @@ vector<uint8_t> Jit::dump_memory() const {
 }
 
 Symbol Jit::symbol(const std::string &name) const {
-    if (m_symbols.count(name) == 0) {
+    if (m_buffers.count(name)) {
+        return Symbol(name, 0, m_buffers.at(name).address);
+    }
+    else if (m_symbols.count(name)) {
+        void *loc = m_symbols.at(name);
+        int32_t offset = 0;
+        if (loc >= m_code && loc < m_code + m_code_size) {
+            offset = (uint8_t *)loc - m_code;
+        } else {
+            offset = -1;
+        }
+
+        return Symbol(name, offset, loc);
+    } else {
         return Symbol(name);
     }
-    void *loc = m_symbols.at(name);
-    int32_t offset = 0;
-    if (loc >= m_code && loc < m_code + m_code_size) {
-        offset = (uint8_t *)loc - m_code;
-    } else {
-        offset = -1;
-    }
-    return Symbol(name, offset, loc);
+
 }

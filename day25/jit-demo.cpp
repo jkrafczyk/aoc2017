@@ -50,41 +50,25 @@ void compile_state(Jit &jit, State &state) {
     compile_state_action(jit, state, state.actions[1]);
 }
 
-void say_hi(const char *arg) {
-    cout << "Hi from the jit." << flush << endl;
-    cout << "Passed argument was: " << (void*)arg << flush <<endl;
-    cout << arg << flush << endl;
-    cout << "Jit says bye." << flush << endl;
-}
-
 int main(int argc, char **argv) {
     uint64_t output = 666;
-    const char *format_string = "jit says hi";
-
     Jit jit;
 
+    jit.add_constant("format_string", "Jit says hi: %i!\n");
     jit.emit_symbol("output", &output);
     jit.emit_symbol("printf", (void*)printf);
-    jit.emit_symbol("say_hi", (void*)say_hi);
-    jit.emit_symbol("exit", (void*)exit);
     //jit.emit_symbol("format_string", format_string);
-    jit.emit_function("main", 0, [format_string](auto jit, auto name, auto end_label) {
+    jit.emit_function("main", 0, [](auto jit, auto name, auto end_label) {
         // Get address of 'output' variable:
         jit->emit_mov(Register::RAX, jit->symbol("output"));
         // Put function argument into output variable
         jit->emit_mov(Indirect(Register::RAX), Register::RDI);
 
-        jit->emit_function_call(jit->symbol("printf"), 1, format_string);
-//        jit->emit_function_call(jit->symbol("exit"), 1, 0);
+        jit->emit_function_call(jit->symbol("printf"), 2, jit->symbol("format_string").address, 80085);
         // Return value '23'
         jit->emit_mov(Register::RAX, 23);
     });
 
-    cout << "format_str: @" << (void*)format_string << " has contents " << format_string << endl;
-    cout << "printf: @" << (void*)printf << endl;
-    cout << "exit: @" << (void*)exit << endl;
-    jit.emit_function_call(jit.symbol("exit"), 1, 0);
-//    jit.emit_function_call(jit.symbol("printf"), 1, format_string);
     jit.finalize_code();
 
     {

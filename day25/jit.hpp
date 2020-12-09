@@ -154,6 +154,9 @@ class Jit {
     void emit_function(const std::string &name, uint8_t n_locals, FunctionDefiner contents);
     void emit_function_call(Symbol function_name, uint64_t argc, ...);
 
+    //Non-executable memory management:
+    void add_constant(const std::string &name, const std::string &value);
+    void add_buffer(const std::string &name, uint64_t size);
 
     // Utility and inspection:
     std::vector<uint8_t> dump_memory() const;
@@ -161,10 +164,12 @@ class Jit {
 
   private:
     struct SymbolRef;
+    struct Buffer;
     uint32_t m_code_size;
     uint32_t m_offset;
     bool m_code_finalized;
     uint8_t *m_code;
+    std::map<std::string, Buffer> m_buffers;
     std::map<std::string, void *> m_symbols;
     std::list<SymbolRef> m_symbol_refs;
 
