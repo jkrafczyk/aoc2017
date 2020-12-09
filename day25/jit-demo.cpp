@@ -90,10 +90,13 @@ int main(int argc, char **argv) {
   jit.emit_mov(Register::RAX, 23);
   function_epilogue(jit, "main");
 
-  //Playground area
+  // Playground area
   jit.emit_sub(Register::RAX, jit.symbol("main"));
   jit.emit_sub(Register::R8, jit.symbol("main"));
-
+  jit.emit_mul(Register::RCX);
+  jit.emit_mul(Register::R8);
+  jit.emit_div(Register::RCX);
+  jit.emit_div(Register::R8);
   jit.finalize_code();
 
   {

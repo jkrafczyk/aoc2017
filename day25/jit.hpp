@@ -136,8 +136,8 @@ public:
   void emit_sub(Register target, Register subtrahend);
   void emit_sub(Register target, Symbol subtrahend);
 
-  void emit_mul(Register arg); //RDX:RAX = RAX * arg
-  void emit_div(Register arg); //RAX = RDX:RAX / arg
+  void emit_mul(Register arg); // RDX:RAX = RAX * arg
+  void emit_div(Register arg); // RAX = RDX:RAX / arg
 
   // TODO: cmp, sub, mul, div, loop
 
