@@ -5,7 +5,7 @@
 #include <string>
 
 namespace day25 {
-    class Program;
+    struct Program;
 
     class Executor {
     public:

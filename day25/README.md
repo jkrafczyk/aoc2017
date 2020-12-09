@@ -35,3 +35,10 @@ To convert a Program to C sourcecode, use `build/day25 generate-c real-input`. T
 * `executor.cpp` and `executor.hpp` contain the base classes for everything that can run programs directly in-memory (as apposed to generating C source code)
 * Any `something_executor` file contains files related to one executor/runtime implementation.
 * `jit.hpp` and `jit.cpp` are utilities for creating executable amd64/IA-32E/x64 programs in-memory.
+
+## Useful resources
+
+* A description of the SystemV AMD64 ABI (calling conventions): https://en.wikipedia.org/wiki/X86_calling_conventions#System_V_AMD64_ABI
+* Agner Fog's 'objconv' disassembler: https://www.agner.org/optimize/#objconv
+* Skeeto's article on writing a JIT for a toy language: https://nullprogram.com/blog/2015/03/19/
+* People claim that https://www.stephendiehl.com/posts/monads_machine_code.html is relevant, too.
