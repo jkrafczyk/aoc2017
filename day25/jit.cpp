@@ -212,7 +212,8 @@ void Jit::emit_mov(Register dest, Indirect src) {
 
 void Jit::emit_mov(Indirect dest, Register src) {
     // mov r/m64, r64
-    emit(rex(1, 0, 0, dest.reg >= Register::R8));
+    //emit(rex(1, 0, 0, dest.reg >= Register::R8));
+    emit(rex(1,  src >= Register::R8, dest.offset_reg >= Register::R8 && dest.offset_reg != Register::NONE, dest.reg >= Register::R8));
     emit((uint8_t)0x89);
 
     if (dest.reg == Register::RBP) {
@@ -228,8 +229,8 @@ void Jit::emit_mov(Indirect dest, Register src) {
         }
     } else {
         uint8_t reg = 0x00;
-        reg |= ((uint8_t)dest.reg);
-        reg |= ((uint8_t)src) << 3;
+        reg |= ((uint8_t)dest.reg) & 0x7;
+        reg |= (((uint8_t)src) & 0x7)<< 3;
         emit(reg);
     }
 }
