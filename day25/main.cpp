@@ -129,7 +129,7 @@ int generate_c(Program program, ostream &cfile) {
     cfile << R"(  printf("Time per iteration: %lfms\n", duration/25);)" << endl;
     cfile << R"(  printf("Total executed steps: )"
           << program.checksum_delay * 25 << R"(\n");)" << endl;
-    cfile << "  printf(\"%lf steps/ms\\n%lf us/steps\\n\", "
+    cfile << "  printf(\"%lf steps/ms\\n%lf us/step\\n\", "
           << program.checksum_delay * 25 << "/ duration, 1000 * duration / "
           << program.checksum_delay * 25 << ");" << endl;
     cfile << "//Actual execution:" << endl;
