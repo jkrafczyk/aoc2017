@@ -1,6 +1,7 @@
 /build
 /build-*
 /make-opcode-sheet.sh
+/docs
 demo
 demo.c
 demo.o

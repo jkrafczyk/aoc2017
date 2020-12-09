@@ -4,6 +4,15 @@
 #include "program.hpp"
 
 namespace day25 {
+    /**
+     * Executes \ref Program "Programs" by translating them into machine-code in memory.
+     *
+     * \warning
+     * This will crash in many scenarios:
+     * Espcially, it requires the application to be running on a 64-bit X86 compatible CPU
+     * (AMD64/X64/X86-64/IA32-E) <b>and</b> using the System V AMD64 ABI.
+     * This typically means any 64-bit Linux on Intel/AMD CPUs, or MacOS on Intel CPUs.
+     */
     class JitExecutor : public virtual Executor {
     public:
         JitExecutor(Program program);

@@ -26,3 +26,4 @@ target_include_directories(day25 PRIVATE include)
 
 add_executable(jit-demo src/app/jit-demo.cpp)
 target_link_libraries(jit-demo PUBLIC d25)
+target_include_directories(jit-demo PRIVATE include)

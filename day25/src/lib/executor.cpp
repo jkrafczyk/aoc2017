@@ -27,8 +27,8 @@ static map<string, ExecutorFactory> factories = {
 };
 } // namespace
 
-shared_ptr<Executor> get_executor(const string &name, Program p) {
-    return factories.at(name)(p);
+shared_ptr<Executor> get_executor(const string &type, Program p) {
+    return factories.at(type)(p);
 }
 
 list<string> list_executors() {
