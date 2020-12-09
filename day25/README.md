@@ -23,6 +23,9 @@ To convert a Program to C sourcecode, use `build-Release/day25 generate-c real-i
 
 ## File overview
 
+* All includes are in `include/`
+* Common source code (shared for the main and playground applications) is in `src/lib`.
+* Source code for the application entrypoints is in `src/app`.  
 * `CMakeLists.txt` describes the build process for CMake.  
 * The `tokenizer`, `parser` and `program` files contain classes related to parsing the turing machine language and representing parsed programs in-memory.
 * `executor.cpp` and `executor.hpp` contain the base classes for everything that can run programs directly in-memory (as apposed to generating C source code)
