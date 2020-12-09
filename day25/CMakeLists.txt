@@ -15,7 +15,7 @@ add_library(libday25
         bytecode_executor.cpp
         jit.cpp)
 
-add_executable(day25 day25.cpp)
+add_executable(day25 main.cpp)
 target_link_libraries(day25 PUBLIC libday25)
 
 add_executable(jit-demo jit-demo.cpp)

@@ -10,6 +10,10 @@ using std::endl;
 using namespace day25;
 
 /*
+ * Register allocation order for called functions:
+ *   rdi, rsi, rdx, rcx, r8, r9
+ *   Return value in rax
+ *   non-volatile registers: rbx, rsp, rbp, r12-r15
  * State machine register allocation:
  *   rax: Whatever is currently useful
  *   rcx: Remaining number of requested iterations (via call argument)
@@ -18,6 +22,7 @@ using namespace day25;
  *   rdi: Tape base address
  *   rsp: Reserved!
  *   rbp: Reserved!
+ *
  */
 
 void compile_state_action(Jit &jit, State &state, StateAction &action) {
@@ -47,6 +52,12 @@ void function_prelude(Jit &jit, const string &name) {
     jit.emit_symbol(name);
     jit.emit_symbol("_" + name + "_start");
     jit.emit_push(Register::RBP);
+    //This is wasteful, but push all non-volatile registers:
+    jit.emit_push(Register::RBX);
+    jit.emit_push(Register::R12);
+    jit.emit_push(Register::R13);
+    jit.emit_push(Register::R14);
+    jit.emit_push(Register::R15);
     jit.emit_mov(Register::RBP, Register::RSP);
     //This really should be 'sub rsp, 0x10', but it isn't.
     jit.emit_add(Register::RSP, -0x10);
@@ -55,6 +66,11 @@ void function_prelude(Jit &jit, const string &name) {
 void function_epilogue(Jit &jit, const string &name)  {
     jit.emit_symbol("_" + name + "end");
     jit.emit_add(Register::RSP, 0x10);
+    jit.emit_pop(Register::R15);
+    jit.emit_pop(Register::R14);
+    jit.emit_pop(Register::R13);
+    jit.emit_pop(Register::R12);
+    jit.emit_pop(Register::RBX);
     jit.emit_pop(Register::RBP);
     jit.emit_ret();
 }
@@ -74,10 +90,6 @@ int main(int argc, char** argv) {
     function_epilogue(jit, "main");
     jit.finalize_code();
 
-    auto result = jit.call("main", 80085);
-    cout << "Call returned: " << result << endl
-         << "'output' is now: " << output << endl;
-
     {
         auto memory = jit.dump_memory();
         ofstream file("func.bin");
@@ -86,8 +98,8 @@ int main(int argc, char** argv) {
         }
     }
 
-//    auto result = jit.call("main", 42);
-//    cout << "Result: " << (void*)result << endl;
-//    cout << "Side-effect: " << output << endl;
+    auto result = jit.call("main", 42);
+    cout << "Result: " << (void*)result << endl;
+    cout << "Side-effect: " << output << endl;
     return 0;
 }
