@@ -1,8 +1,8 @@
 #pragma once
-#include <string>
-#include "program.hpp"
 #include "executor.hpp"
+#include "program.hpp"
+#include <string>
 
 namespace day25 {
-    Program load_file(const std::string &filename);
+Program load_file(const std::string &filename);
 }

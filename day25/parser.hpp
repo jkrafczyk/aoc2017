@@ -1,40 +1,38 @@
 #pragma once
-#include "tokenizer.hpp"
 #include "program.hpp"
+#include "tokenizer.hpp"
 
 namespace day25 {
-    struct ParserState {
-        bool error;
-        bool eof;
-        std::string error_message;
-        Token token;
+struct ParserState {
+  bool error;
+  bool eof;
+  std::string error_message;
+  Token token;
 
-        operator bool() const {
-            return !eof && !error;
-        }
-    };
+  operator bool() const { return !eof && !error; }
+};
 
-    class Parser {
-    public:
-        Parser(Tokenizer &source);
+class Parser {
+public:
+  Parser(Tokenizer &source);
 
-        const ParserState &parse();
+  const ParserState &parse();
 
-        Program program();
+  Program program();
 
-    private:
-        Tokenizer &m_source;
-        Program m_program;
-        ParserState m_last_state;
+private:
+  Tokenizer &m_source;
+  Program m_program;
+  ParserState m_last_state;
 
-        const ParserState &parse_state(const Token &state_declaration);
+  const ParserState &parse_state(const Token &state_declaration);
 
-        const ParserState &finalize_program(const Token &eof_token);
+  const ParserState &finalize_program(const Token &eof_token);
 
-        const ParserState &error(const Token &token, const std::string &message);
+  const ParserState &error(const Token &token, const std::string &message);
 
-        const ParserState &ok(const Token &token);
+  const ParserState &ok(const Token &token);
 
-        const ParserState &eof(const Token &token);
-    };
-}
+  const ParserState &eof(const Token &token);
+};
+} // namespace day25

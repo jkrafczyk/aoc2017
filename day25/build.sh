@@ -12,10 +12,10 @@ else
   COMMAND_PREFIX=
   CMAKE_ARGS=
 fi
-CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release"
+CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_BUILD_TYPE=Debug"
 
 mkdir -p build
 pushd build >& /dev/null
 ${COMMAND_PREFIX} cmake .. $CMAKE_ARGS
-${COMMAND_PREFIX} make
+${COMMAND_PREFIX} make -j
 popd >& /dev/null
