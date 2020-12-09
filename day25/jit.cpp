@@ -360,7 +360,7 @@ void Jit::emit_sub(Register target, int8_t imm_subtrahend) {
 
 void Jit::emit_sub(Register target, int32_t imm_subtrahend) {
     if (imm_subtrahend >= -128 && imm_subtrahend <= 127) {
-        emit_sub(target, (int8_t)imm_subtrahend);
+        return emit_sub(target, (int8_t)imm_subtrahend);
     }
     emit(rex(1, 0, 0, target >= Register::R8));
     emit((uint8_t)0x81);
@@ -392,6 +392,38 @@ void Jit::emit_div(Register arg) {
     emit(rex(1, 0, 0, arg >= Register::R8));
     emit((uint8_t)0xF7);
     emit(register_pair(Register::RSI, arg));
+}
+
+void Jit::emit_cmp(Register r1, int8_t imm) {
+    emit(rex(1, 0, 0, r1 >= Register::R8));
+    emit((uint8_t)0x83);
+    uint8_t reg = 0xf8;
+    reg |= ((uint8_t)r1) & 0x7;
+    emit(reg);
+    emit(imm);
+}
+void Jit::emit_cmp(Register r1, int32_t imm) {
+    if (imm >= -128 && imm <= 127) {
+        return emit_cmp(r1, (int8_t)imm);
+    }
+    emit(rex(1, 0, 0, r1 >= Register::R8));
+    emit((uint8_t)0x81);
+    uint8_t reg = 0xf8;
+    reg |= ((uint8_t)r1) & 0x7;
+    emit(reg);
+    emit(imm);
+}
+void Jit::emit_cmp(Register r1, Register r2) {
+    emit(rex(1, r2 >= Register::R8, 0, r1 >= Register::R8));
+    emit((uint8_t)0x39);
+    emit(register_pair(r2, r1));
+}
+void Jit::emit_cmp(Register r1, Symbol s) {
+    emit(rex(1, r1 >= Register::R8, 0, 0));
+    emit((uint8_t)0x3B);
+    emit(ModR(0, r1, Register::RBP));
+    emit_symbol_relative_ref(s.name, sizeof(uint32_t));
+    emit(0xdeadbeef);
 }
 
 uint64_t Jit::call(uint64_t arg) { return call(m_code, arg); }

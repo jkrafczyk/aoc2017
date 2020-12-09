@@ -97,6 +97,16 @@ int main(int argc, char **argv) {
     jit.emit_mul(Register::R8);
     jit.emit_div(Register::RCX);
     jit.emit_div(Register::R8);
+    jit.emit_cmp(Register::RAX, 1);
+    jit.emit_cmp(Register::R15, 1);
+    jit.emit_cmp(Register::RAX, 255);
+    jit.emit_cmp(Register::R15, 255);
+    jit.emit_cmp(Register::RCX, Register::RDX);
+    jit.emit_cmp(Register::RDX, Register::R9);
+    jit.emit_cmp(Register::R9, Register::RDX);
+    jit.emit_cmp(Register::R8, Register::R9);
+    jit.emit_cmp(Register::RCX, jit.symbol("main"));
+    jit.emit_cmp(Register::R8, jit.symbol("main"));
     jit.finalize_code();
 
     {

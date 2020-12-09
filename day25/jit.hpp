@@ -140,7 +140,11 @@ class Jit {
     void emit_mul(Register arg); // RDX:RAX = RAX * arg
     void emit_div(Register arg); // RAX = RDX:RAX / arg
 
-    // TODO: cmp, sub, mul, div, loop
+    void emit_cmp(Register r1, int8_t imm);
+    void emit_cmp(Register r1, int32_t imm);
+    void emit_cmp(Register r1, Register r2);
+    void emit_cmp(Register r1, Symbol s);
+
 
     // Utility and inspection:
     std::vector<uint8_t> dump_memory() const;
