@@ -16,7 +16,7 @@ add_library(libday25
         jit.cpp)
 
 #Enable loads of warnings, but accept C99 extensions like designated initializers:
-target_compile_options(libday25 PRIVATE -Wall -pedantic -Wno-c99-extensions)
+target_compile_options(libday25 PRIVATE -Wall -Wextra -pedantic -Wno-c99-extensions)
 
 add_executable(day25 main.cpp)
 target_link_libraries(day25 PUBLIC libday25)

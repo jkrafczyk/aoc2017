@@ -50,7 +50,7 @@ namespace day25 {
 
     uint32_t BytecodeExecutor::diagnostic_checksum() {
         uint32_t checksum = 0;
-        for (int i=0; i<m_program.checksum_delay; i++) {
+        for (uint32_t i=0; i<m_program.checksum_delay; i++) {
             checksum += m_memory[i];
         }
         return checksum;
