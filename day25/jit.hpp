@@ -145,6 +145,15 @@ class Jit {
     void emit_cmp(Register r1, Register r2);
     void emit_cmp(Register r1, Symbol s);
 
+    void emit_call(Register target);
+    void emit_call(Indirect target);
+    void emit_call(Symbol target);
+
+    //Abstract / high-level stuff:
+    typedef std::function<void(Jit *jit, const std::string &name, const std::string &return_label)> FunctionDefiner;
+    void emit_function(const std::string &name, uint8_t n_locals, FunctionDefiner contents);
+    void emit_function_call(Symbol function_name, uint64_t argc, ...);
+
 
     // Utility and inspection:
     std::vector<uint8_t> dump_memory() const;

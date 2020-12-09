@@ -1,9 +1,12 @@
 #include "jit.hpp"
 #include <stdexcept>
+#include <cstdarg>
+#include <list>
 #include <sys/mman.h>
 
 using std::runtime_error;
 using std::vector;
+using std::list;
 
 using namespace day25;
 
@@ -425,6 +428,96 @@ void Jit::emit_cmp(Register r1, Symbol s) {
     emit_symbol_relative_ref(s.name, sizeof(uint32_t));
     emit(0xdeadbeef);
 }
+
+void Jit::emit_call(Register target) {
+    emit(rex(0, 0, 0, target >= Register::R8));
+    emit((uint8_t)0xff);
+    uint8_t r = 0xD0;
+    r |= ((uint8_t)target) & 0x7;
+    emit(r);
+}
+
+void Jit::emit_call(Indirect target) {
+    emit(rex(0, 0, 0, target.reg >= Register::R8));
+    emit((uint8_t)0xff);
+    if (target.offset_reg == Register::NONE) {
+        uint8_t r = 0x10;
+        r |= ((uint8_t)target.reg) & 0x7;
+        emit(r);
+    } else {
+        throw std::runtime_error("Indirect calls with offset are unsupported.");
+    }
+}
+
+void Jit::emit_call(Symbol target) {
+    emit((uint8_t)0xE8);
+    emit_symbol_relative_ref(target.name, sizeof(uint32_t));
+    emit((uint32_t)0xdeadbeef);
+}
+
+
+void Jit::emit_function(const std::string &name, uint8_t n_locals, FunctionDefiner contents) {
+    int32_t stack_requirements = 16 + 8 * n_locals;
+    while (stack_requirements % 16) {
+        stack_requirements++; //Yeah, we could just do a single "+8" here, but i'm feeling insecure...
+    }
+    std::string end_label = "_" + name + "_end";
+    std::string start_label = "_" + name + "_start";
+    //Prelude:
+    emit_symbol(name);
+    emit_symbol(start_label);
+    emit_push(Register::RBP);
+    emit_mov(Register::RBP, Register::RSP);
+    emit_sub(Register::RSP, stack_requirements);
+
+    //Wasteful, but easy: Store all non-volatile registers. To ensure 16-byte stack alignment, also store R11.
+    emit_push(Register::R11);
+    emit_push(Register::R12);
+    emit_push(Register::R13);
+    emit_push(Register::R14);
+    emit_push(Register::R15);
+    emit_push(Register::RBX);
+
+    //Body
+    contents(this, name, end_label);
+
+    //Cleanup and return:
+    emit_symbol(end_label);
+    emit_pop(Register::RBX);
+    emit_pop(Register::R15);
+    emit_pop(Register::R14);
+    emit_pop(Register::R13);
+    emit_pop(Register::R12);
+    emit_pop(Register::R11);
+
+    emit_add(Register::RSP, stack_requirements);
+    emit_pop(Register::RBP);
+    emit_ret();
+}
+
+void Jit::emit_function_call(Symbol function_name, uint64_t argc, ...) {
+    static const vector<Register> arg_register_order = {
+            Register::RDI,
+            Register::RSI,
+            Register::RDX,
+            Register::RCX,
+            Register::R8,
+            Register::R9
+    };
+    if (argc > arg_register_order.size()) {
+        throw runtime_error("No explicit support for calling functions with more than 6 arguments.");
+    }
+    va_list args;
+    va_start(args, argc);
+    for (int i=0; i < argc; i++) {
+        auto value = va_arg(args, uint64_t);
+        emit_mov(arg_register_order[i], value);
+    }
+    emit_mov(Register::RAX, function_name);
+    emit_call(Register::RAX);
+    va_end(args);
+}
+
 
 uint64_t Jit::call(uint64_t arg) { return call(m_code, arg); }
 
