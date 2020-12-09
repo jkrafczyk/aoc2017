@@ -1,4 +1,5 @@
 #include "bytecode_executor.hpp"
+#include <cstring>
 
 namespace day25 {
 BytecodeExecutor::BytecodeExecutor(Program program) : m_program(program) {

@@ -1,6 +1,7 @@
 #include "jit.hpp"
 #include <stdexcept>
 #include <cstdarg>
+#include <cstring>
 #include <list>
 #include <sys/mman.h>
 

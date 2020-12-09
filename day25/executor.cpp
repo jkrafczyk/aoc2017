@@ -4,6 +4,7 @@
 #include "jit_executor.hpp"
 
 #include <map>
+#include <functional>
 using std::function;
 using std::list;
 using std::map;

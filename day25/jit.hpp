@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <functional>
 
 namespace day25 {
 enum class Register : uint8_t {

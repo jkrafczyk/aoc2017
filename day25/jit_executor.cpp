@@ -1,5 +1,6 @@
 #include "jit_executor.hpp"
 #include <cstdint>
+#include <cstring>
 #include <iostream>
 
 using std::cout;

@@ -12,7 +12,7 @@ else
   COMMAND_PREFIX=
   CMAKE_ARGS=
 fi
-CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_BUILD_TYPE=Debug"
+CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release"
 
 mkdir -p build
 pushd build >& /dev/null
