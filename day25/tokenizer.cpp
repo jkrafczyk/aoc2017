@@ -24,8 +24,8 @@ static regex STATE_MOVEMENT_RE("\\s*- Move one slot to the (left|right)\\.");
 static regex STATE_NEXT_RE("\\s*- Continue with state ([a-zA-Z0-9]+)\\.");
 
 struct TokenExpression {
-  const regex &regex;
-  const Token::Type type;
+    const regex &regex;
+    const Token::Type type;
 };
 static list<TokenExpression> TOKEN_EXPRESSIONS = {
     {INITIAL_STATE_RE, Token::INITIAL_STATE},
@@ -42,39 +42,39 @@ namespace day25 {
 Tokenizer::Tokenizer(istream &source) : m_source(source), m_line_number(0) {}
 
 const Token &Tokenizer::next() {
-  Token result = {
-      .type = Token::ERROR,
-      .line_number = m_line_number,
-      .raw_text = "",
-      .arg = "",
-  };
+    Token result = {
+        .type = Token::ERROR,
+        .line_number = m_line_number,
+        .raw_text = "",
+        .arg = "",
+    };
 
-  string line;
-  while (line == "" || regex_match(line, EMPTY_LINE)) {
-    if (m_source.eof()) {
-      result.type = Token::END_OF_STREAM;
-      return m_current = result;
+    string line;
+    while (line == "" || regex_match(line, EMPTY_LINE)) {
+        if (m_source.eof()) {
+            result.type = Token::END_OF_STREAM;
+            return m_current = result;
+        }
+        getline(m_source, line);
+        m_line_number++;
     }
-    getline(m_source, line);
-    m_line_number++;
-  }
-  result.line_number = m_line_number;
-  result.raw_text = line;
+    result.line_number = m_line_number;
+    result.raw_text = line;
 
-  std::smatch match;
-  for (auto it : TOKEN_EXPRESSIONS) {
-    if (regex_match(line, match, it.regex)) {
-      result.type = it.type;
-      break;
+    std::smatch match;
+    for (auto it : TOKEN_EXPRESSIONS) {
+        if (regex_match(line, match, it.regex)) {
+            result.type = it.type;
+            break;
+        }
     }
-  }
 
-  if (result.type != Token::ERROR && match.size() > 0) {
-    result.arg = match[1];
-  }
+    if (result.type != Token::ERROR && match.size() > 0) {
+        result.arg = match[1];
+    }
 
-  m_current = result;
-  return m_current;
+    m_current = result;
+    return m_current;
 }
 
 const Token &Tokenizer::current() const { return m_current; }
