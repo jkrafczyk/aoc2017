@@ -112,28 +112,28 @@ namespace day25 {
 
     const ParserState &Parser::error(const Token &token, const string &message) {
         return m_last_state = ParserState {
-                .eof = false,
                 .error = true,
+                .eof = false,
+                .error_message = message,
                 .token = token,
-                .error_message = message
         };
     }
 
     const ParserState &Parser::eof(const Token &token) {
         return m_last_state = ParserState {
-                .eof = true,
                 .error = false,
+                .eof = true,
+                .error_message = "",
                 .token = token,
-                .error_message = ""
         };
     }
 
     const ParserState &Parser::ok(const Token &token) {
         return m_last_state = ParserState {
-                .eof = false,
                 .error = false,
+                .eof = false,
+                .error_message = "",
                 .token = token,
-                .error_message = ""
         };
     }
 }

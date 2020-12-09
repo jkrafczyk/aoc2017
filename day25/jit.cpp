@@ -131,8 +131,8 @@ void Jit::emit_symbol(const std::string &name, void *location) {
 void Jit::emit_symbol_ref(const std::string &name) {
     m_symbol_refs.push_back(SymbolRef{
         .absolute = true,
-        .symbol = name,
         .offset = m_offset,
+        .symbol = name,
         .replacement_length = sizeof(void*)
     });
 }
@@ -140,8 +140,8 @@ void Jit::emit_symbol_ref(const std::string &name) {
 void Jit::emit_symbol_relative_ref(const std::string &name, uint8_t ref_length) {
     m_symbol_refs.push_back(SymbolRef{
         .absolute = false,
-        .symbol = name,
         .offset = m_offset,
+        .symbol = name,
         .replacement_length = ref_length
     });
 }

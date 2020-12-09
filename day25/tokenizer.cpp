@@ -42,10 +42,10 @@ namespace day25 {
 
     const Token &Tokenizer::next() {
         Token result = {
-                .line_number = m_line_number,
                 .type = Token::ERROR,
-                .arg = "",
+                .line_number = m_line_number,
                 .raw_text = "",
+                .arg = "",
         };
 
         string line;
