@@ -10,19 +10,6 @@ using std::list;
 
 using namespace day25;
 
-struct Jit::SymbolRef {
-    const bool absolute;
-    const uint32_t offset;
-    const std::string symbol;
-    const uint8_t replacement_length;
-};
-
-struct Jit::Buffer {
-    std::string name;
-    uint64_t size;
-    uint8_t *address;
-};
-
 namespace {
 uint8_t rex(uint8_t w, uint8_t r, uint8_t x, uint8_t b) {
     return (0b0100'0000 | ((w & 1) << 3) | ((r & 1) << 2) | ((x & 1) << 1) |
@@ -83,10 +70,15 @@ void Jit::finalize_code() {
     }
 
     for (auto ref : m_symbol_refs) {
-        if (m_symbols.count(ref.symbol) == 0) {
+//
+//        if (m_symbols.count(ref.symbol) == 0) {
+//            throw runtime_error("Reference to undefined symbol " + ref.symbol);
+//        }
+        auto symbol = this->symbol(ref.symbol);
+        if (symbol.address == nullptr) {
             throw runtime_error("Reference to undefined symbol " + ref.symbol);
         }
-        void *ref_addr = m_symbols.at(ref.symbol);
+        const void *ref_addr = symbol.address;
         void *here = m_code + ref.offset;
         int64_t distance =
             (uint8_t *)ref_addr - ref.replacement_length - (uint8_t *)here;
@@ -196,7 +188,7 @@ void Jit::emit_mov(Register dest, Register src) {
 
 void Jit::emit_mov(Register dest, Indirect src) {
     // mov r64, r/m64
-    emit(rex(1, 0, 0, dest >= Register::R8));
+    emit(rex(1, dest >= Register::R8, src.offset_reg >= Register::R8 && src.offset_reg != Register::NONE, src.reg >= Register::R8));
     emit((uint8_t)0x8b);
 
     if (src.reg == Register::RBP) {
@@ -212,8 +204,8 @@ void Jit::emit_mov(Register dest, Indirect src) {
         }
     } else {
         uint8_t reg = 0x00;
-        reg |= ((uint8_t)src.reg);
-        reg |= ((uint8_t)dest) << 3;
+        reg |= (((uint8_t)src.reg) & 0x7);
+        reg |= (((uint8_t)dest) & 0x7 )<< 3;
         emit(reg);
     }
 }

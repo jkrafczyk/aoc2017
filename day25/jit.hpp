@@ -175,4 +175,17 @@ class Jit {
 
     uint64_t call(void *location, uint64_t arg);
 };
+
+struct Jit::SymbolRef {
+    const bool absolute;
+    const uint32_t offset;
+    const std::string symbol;
+    const uint8_t replacement_length;
+};
+
+struct Jit::Buffer {
+    std::string name;
+    uint64_t size;
+    uint8_t *address;
+};
 } // namespace day25

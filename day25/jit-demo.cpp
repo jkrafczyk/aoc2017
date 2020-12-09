@@ -1,5 +1,7 @@
 #include "day25.hpp"
 #include "jit.hpp"
+#include "day25.hpp"
+#include "jit_executor.hpp"
 #include <fstream>
 #include <iostream>
 
@@ -10,47 +12,44 @@ using std::ofstream;
 using std::string;
 using namespace day25;
 
-/*
- * Register allocation order for called functions:
- *   rdi, rsi, rdx, rcx, r8, r9
- *   Return value in rax
- *   non-volatile registers: rbx, rsp, rbp, r12-r15
- * State machine register allocation:
- *   rax: Whatever is currently useful
- *   rcx: Remaining number of requested iterations (via call argument)
- *   rdx: Pointer to current state
- *   rbx: [Reserved, needs to be restored!]
- *   rdi: Tape base address
- *   rsp: Reserved!
- *   rbp: Reserved!
- *
- */
-
-void compile_state_action(Jit &jit, State &state, StateAction &action) {
-    jit.emit_symbol("state_" + state.name + "_" +
-                    std::to_string(action.slot_condition));
-    // mov [tape_base+cell_offset], action.write
-    // Either:
-    //   inc cell_offset
-    //   mod tape_size
-    // Or:
-    //   add cell_offset, tape_size
-    //   dec cell_offset
-    //   mod tape_size
-    // mov state, action.next_state
-}
-
-void compile_state(Jit &jit, State &state) {
-    jit.emit_symbol("state_" + state.name);
-    //  cmp [tape_base+cell_offset], 0
-    //  jne stateX1
-    // stateX0:
-    compile_state_action(jit, state, state.actions[0]);
-    // stateX1:
-    compile_state_action(jit, state, state.actions[1]);
+int new_main(int argc, char **argv) {
+    auto program = load_file("sample-input");
+    auto executor = JitExecutor(program);
+    {
+        auto memory = executor.jit().dump_memory();
+        ofstream file("func.bin");
+        for (auto byte : memory) {
+            file.write((char *)&byte, 1);
+        }
+    }
+    return 0;
 }
 
 int main(int argc, char **argv) {
+    Jit jit;
+    jit.add_constant("some_constant", "asdfzxcv");
+    auto symbol = jit.symbol("some_constant");
+    cout << symbol.address << endl;
+    jit.emit_mov(Register::R9, symbol);
+    jit.emit_mov(Register::RAX, Indirect(Register::RAX));
+    jit.emit_mov(Register::R9, Indirect(Register::RAX));
+    jit.emit_mov(Register::R9, Indirect(Register::R10));
+    jit.emit_mov(Register::R9, Indirect(Register::R10, Register::RAX));
+    jit.emit_mov(Register::R9, Indirect(Register::R10, Register::R11));
+//    jit.emit_mov(Register::R10, Indirect(Register::R9));
+    jit.finalize_code();
+
+    {
+        auto memory = jit.dump_memory();
+        ofstream file("func.bin");
+        for (auto byte : memory) {
+            file.write((char *)&byte, 1);
+        }
+    }
+    return 0;
+}
+
+int old_main(int argc, char **argv) {
     uint64_t output = 666;
     Jit jit;
 
