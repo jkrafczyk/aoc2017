@@ -8,7 +8,9 @@
 #include <functional>
 
 namespace day25 {
-    //! Names a general-purpose register.
+    /** Names a general-purpose register.
+     * \ingroup jit
+    */
 enum class Register : uint8_t {
     RAX = 0,
     RCX,
@@ -29,7 +31,9 @@ enum class Register : uint8_t {
     NONE = 0xff,
 };
 
-//! Condition codes for Jcc instructions.
+/** Condition codes for Jcc instructions.
+ * \ingroup jit
+ */
 enum class Condition : uint8_t {
     ABOVE = 0x87,
     ABOVE_EQUAL = 0x83,
@@ -66,6 +70,7 @@ enum class Condition : uint8_t {
 /** Describes some forms of indirect addressing like in `lea [rax]`.
  *
  * Only `[register]` and `[register+register]` variants are supported.
+ * \ingroup jit
  */
 struct Indirect {
     Indirect(Register r, Register offset) : reg(r), offset_reg(offset) {}
@@ -76,6 +81,7 @@ struct Indirect {
 };
 
 /** Represents a reference to a named symbol (i.e. a memory address).
+ * \ingroup jit
  */
 struct Symbol {
     Symbol(const std::string &name)
@@ -103,6 +109,7 @@ struct Symbol {
  * int fourty_two = jit.call("my-function", 0);
  * assert(fourty_two == 42);
  * \endcode
+ * \ingroup jit
  */
 class Jit {
   public:

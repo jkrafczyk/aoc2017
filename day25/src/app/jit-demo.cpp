@@ -4,6 +4,11 @@
 #include <fstream>
 #include <iostream>
 
+/*
+ * This is a playground file to experiment with the Jit and its code generation.
+ * Typical usage includes generating some code, dumping it into a file, and then disassembling it.
+ **/
+
 using std::cout;
 using std::flush;
 using std::endl;

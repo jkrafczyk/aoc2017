@@ -6,6 +6,7 @@
 namespace day25 {
     /**
      * Represents one line of input in a program.
+     * \ingroup parsing
      */
 struct Token {
     enum Type {
@@ -38,7 +39,7 @@ struct Token {
 
 /**
  * Splits the lines of a file into \ref Token objects.
- *
+ * \ingroup parsing
  */
 class Tokenizer {
   public:

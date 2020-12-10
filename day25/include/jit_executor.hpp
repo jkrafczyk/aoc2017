@@ -6,7 +6,7 @@
 namespace day25 {
     /**
      * Executes \ref Program "Programs" by translating them into machine-code in memory.
-     *
+     * \ingroup execution
      * \warning
      * This will crash in many scenarios:
      * Espcially, it requires the application to be running on a 64-bit X86 compatible CPU

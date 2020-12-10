@@ -3,6 +3,9 @@
 #include "program.hpp"
 
 namespace day25 {
+    /** Converts \ref Program "Programs" into bytecode for faster execution.
+     * \ingroup execution
+     */
 class BytecodeExecutor : public virtual Executor {
   public:
     BytecodeExecutor(Program program);

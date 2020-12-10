@@ -9,6 +9,7 @@ struct Program;
 
 /**
  * Base class for everything that can run a \ref Program.
+ * \ingroup execution
  */
 class Executor {
   public:
@@ -22,7 +23,7 @@ class Executor {
 };
 
 /** Return the names of all known executor types.
- * \relates Executor
+ * \ingroup execution
  */
 std::list<std::string> list_executors();
 
@@ -31,6 +32,7 @@ std::list<std::string> list_executors();
  * \param type Type-name of the executor. Must be one of the values returned by \ref list_executors.
  * \param p The program to execute.
  * \relates Executor
+ * \ingroup execution
 */
 std::shared_ptr<Executor> get_executor(const std::string &type, Program p);
 } // namespace day25

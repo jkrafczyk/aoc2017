@@ -5,6 +5,10 @@
 #include <vector>
 
 namespace day25 {
+    /**
+     * Executes \ref Program "Programs" directly.
+     * \ingroup execution
+     */
 class AstExecutor : public virtual Executor {
   public:
     AstExecutor(Program program);

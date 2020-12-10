@@ -5,6 +5,7 @@
 namespace day25 {
     /**
      * Describes the success or failure of a parsing operation.
+     * \ingroup parsing
      */
 struct ParserState {
     /**
@@ -23,6 +24,7 @@ struct ParserState {
 
 /**
  * Processes a sequence of \ref Token "Tokens" into a \ref Program.
+ * \ingroup parsing
  */
 class Parser {
   public:
