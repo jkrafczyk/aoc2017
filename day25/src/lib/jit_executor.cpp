@@ -9,7 +9,7 @@ using std::endl;
 namespace day25 {
     namespace {
         void compile_state_action(Jit *jit, const State &state, const StateAction &action, const std::string &end_label) {
-            //Write value to state:
+            //Write value to tape:
             jit->emit_mov(Register::RAX, action.write_value);
             //"mov [R10 + R11], al"
             jit->emit(4, "\x43\x88\x04\x1A");
