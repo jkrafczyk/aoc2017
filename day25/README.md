@@ -79,5 +79,5 @@ In summary, the JIT is pretty fast on machines where it works properly(*), but n
 
 * A description of the SystemV AMD64 ABI (calling conventions): https://en.wikipedia.org/wiki/X86_calling_conventions#System_V_AMD64_ABI
 * Agner Fog's 'objconv' disassembler: https://www.agner.org/optimize/#objconv
-* Skeeto's article on writing a JIT for a toy language: https://nullprogram.com/blog/2015/03/19/
-* People claim that https://www.stephendiehl.com/posts/monads_machine_code.html is relevant, too.
+* [Skeeto's article on writing a JIT for a toy language](https://nullprogram.com/blog/2015/03/19/) was the original inspiration for this project
+* [Stephen Diel](https://www.stephendiehl.com/posts/monads_machine_code.html) goes into more detail on instruction encoding than Skeeto, but writes his example code in Haskell.
