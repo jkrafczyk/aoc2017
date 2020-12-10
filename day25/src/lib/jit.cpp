@@ -17,8 +17,6 @@ uint8_t rex(uint8_t w, uint8_t r, uint8_t x, uint8_t b) {
             ((b & 1)));
 }
 
-//    const uint8_t rexw = rex(1,0,0,0);
-
 uint8_t ModR(uint8_t mod, uint8_t rm, Register reg) {
     return (mod & 0b11) << 6 | (rm & 0b111) << 3 | ((uint8_t)reg & 0b111);
 }
@@ -71,10 +69,6 @@ void Jit::finalize_code() {
     }
 
     for (auto ref : m_symbol_refs) {
-//
-//        if (m_symbols.count(ref.symbol) == 0) {
-//            throw runtime_error("Reference to undefined symbol " + ref.symbol);
-//        }
         auto symbol = this->symbol(ref.symbol);
         if (symbol.address == nullptr) {
             throw runtime_error("Reference to undefined symbol " + ref.symbol);
@@ -113,8 +107,6 @@ void Jit::finalize_code() {
         }
     }
 
-    // TODO: Do relocations, fix jumps, calls and moves, etc. based on symbol
-    // table.
     if (mprotect(m_code, m_code_size, PROT_READ | PROT_EXEC)) {
         throw runtime_error("Could not mark code as executable.");
     }
@@ -178,7 +170,6 @@ void Jit::emit_mov(Register dest, Register src) {
     // MOV r/m64,r64
     // Encoding: REX.W + 89 /r
     //'/r' = bits '11', followed by src reg, followed dest reg.
-    // TODO: This will explode for R8..R15 in any slot!
     uint8_t reg = 0xc0;
     reg |= (((uint8_t)src) &0x7) << 3;
     reg |= ((uint8_t)dest) & 0x7;
